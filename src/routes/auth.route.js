@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/user.model');
 const { body, validationResult, matchedData } = require('express-validator');
+const hasher = require('../utils/hasher');
 
 const validateBoolean = (name, options = {}) => {
   const message = `${name} should be a boolean`;
@@ -73,9 +74,20 @@ const validateSignup = () => {
   ]
 }
 
+const hashPassword = (fieldName = 'password') => {
+  return async (req, res, next) => {
+    if (req.body[fieldName]) {
+      req.body[fieldName] = await hasher.hash(req.body[fieldName]);
+    }
+    next();
+  }
+}
+
 router.route('/signup')
   .post([
     validateSignup(),
+    hashPassword(),
+
     async (req, res) => {
       res.json(req.body)
     }
