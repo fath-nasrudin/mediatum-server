@@ -134,5 +134,48 @@ router.route('/signup')
     }
   ])  
 
+const attachUserByUsername = () => {
+  return async (req, res, next) => {
+    try {
+      if (!req.body.username) return next();
+
+      const user = await User.findOne({username: req.body.username}).select('username password');
+      if (!user) next();
+
+      req.user = user;
+      next();
+    } catch (error) {
+      next(error)
+    }
+  }
+}
+
+router.route('/login')
+  .post([
+    validateLogin(),
+    attachUserByUsername(),
+    async (req, res, next) => {
+      try {
+        if (!req.user) {
+          const err = new Error('Wrong Username or Password');
+          err.status = 400;
+          next(err);
+        }
+
+        const isMatched = await hasher.compare(req.body.password, req.user.password);
+
+        if (!isMatched) {
+          const err = new Error('Wrong Username or Password');
+          err.status = 400;
+          next(err);
+        }
+
+        res.json({message: 'success login'})
+      } catch (error) {
+        next(error)
+      }
+    } 
+  ])
+
 module.exports = router;
 
