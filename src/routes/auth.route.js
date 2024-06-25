@@ -36,6 +36,18 @@ const validateUsername = (name = 'username', options = {}) => {
     .matches(/^[A-Za-z0-9_]+$/).bail()
 }
 
+const validateUniqueUsername = (name, options = {}) => {
+  return body(name).custom( async value => {
+    const user = await User.find({[name]: name})
+    if (user) {
+      const err = new Error(`${name} already in use`);
+      err.status = 400;
+      throw err;
+    }
+  })
+
+}
+
 const validatePassword = (name = 'password') => {
   return   body(name, `${name} should at least have 8 characters and at least have 1 uppercase, 1 lowercase, 1 number, and 1 symbol`)
     .trim()
@@ -67,6 +79,7 @@ const validateSignup = () => {
     validateString('first_name', {}).optional(),
     validateString('last_name', {}).optional(),
     validateUsername('username', { min: 3 }),
+    validateUniqueUsername('username'),
     validatePassword('password'),
 
     checkValidationError(),
