@@ -57,6 +57,17 @@ const validatePassword = (name = 'password') => {
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
 }
 
+const validateRepeatPassword = (repeatPasswordName, passwordName) => {
+  return body(repeatPasswordName)
+    .trim()
+    .escape()
+    .custom((value, { req }) => {
+    if (value !== req.body[passwordName]) {
+      throw new Error(`${passwordName} and ${repeatPasswordName} doesn't match`);
+    }
+    return true;
+  })
+}
 const checkValidationError = () => {
   return (req, res, next) => {
     const errors = validationResult(req);
@@ -82,6 +93,7 @@ const validateSignup = () => {
     validateUsername('username', { min: 3 }),
     validateUniqueUsername('username'),
     validatePassword('password'),
+    validateRepeatPassword('password_repeat', 'password'),
 
     checkValidationError(),
     removeUnregisteredProperties(),
