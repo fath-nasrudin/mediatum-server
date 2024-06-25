@@ -38,7 +38,7 @@ const validateUsername = (name = 'username', options = {}) => {
 
 const validateUniqueUsername = (name, options = {}) => {
   return body(name).custom( async value => {
-    const user = await User.find({[name]: name})
+    const user = await User.findOne({[name]: value})
     if (user) {
       const err = new Error(`${name} already in use`);
       err.status = 400;
