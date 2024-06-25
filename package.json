@@ -1,0 +1,20 @@
+{
+  "name": "mediatum-server",
+  "version": "1.0.0",
+  "description": "server for mediatum blog",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+  },
+  "keywords": [],
+  "author": "fath-nasrudin",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
