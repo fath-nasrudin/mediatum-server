@@ -89,7 +89,13 @@ router.route('/signup')
     hashPassword(),
 
     async (req, res) => {
-      res.json(req.body)
+      try {
+        const user = new User(req.body);
+        await user.save();
+        res.status(201).json()
+      } catch (error) {
+        next(error)
+      }
     }
   ])  
 
