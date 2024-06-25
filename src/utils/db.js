@@ -9,3 +9,6 @@ module.exports.connect = (stringConnection = config.db.stringConnection, options
     .then(() => logger.info('database connected'))
     .catch(err => logger.error(err));
 }
+
+// exports mongoose module as database
+module.exports.database = mongoose;
