@@ -6,6 +6,6 @@ const { connect: dbConnect } = require('./src/utils/db')
 
 dbConnect();
 
-app.listen(() => {
+app.listen(config.port, () => {
   logger.info(`server running on port ${config.port}`)
 })
