@@ -27,13 +27,13 @@ const validateString = (name, options = {}) => {
 
 const validateUsername = (name = 'username', options = {}) => {
   const { min = 3 } = options;
-  const message = `${name} should at least have ${min} characters and only contain alphabet, number, and . _ characters`;
+  const message = `${name} should at least have ${min} characters and only contain alphabet, number, and underscore characters`;
   return body(name, message)
     .trim()
     .escape()
     .isLength({ min }).bail()
     .isAlphanumeric().bail()
-    .matches(/^[A-Za-z0-9.-]+$/).bail()
+    .matches(/^[A-Za-z0-9_]+$/).bail()
 }
 
 const validatePassword = (name = 'password') => {
