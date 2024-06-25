@@ -183,7 +183,10 @@ router.route('/login')
           next(err);
         }
 
-        res.json({message: 'success login'})
+        res.json({
+          message: 'success login',
+          access_token: generateAccessToken(req.user._id)
+        })
       } catch (error) {
         next(error)
       }
