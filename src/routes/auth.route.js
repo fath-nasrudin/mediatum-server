@@ -2,6 +2,8 @@ const router = require('express').Router();
 const User = require('../models/user.model');
 const { body, validationResult, matchedData } = require('express-validator');
 const hasher = require('../utils/hasher');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
 const validateBoolean = (name, options = {}) => {
   const message = `${name} should be a boolean`;
@@ -148,6 +150,17 @@ const attachUserByUsername = () => {
       next(error)
     }
   }
+}
+
+const generateAccessToken = (id, options  = {}) => {
+  const payload = {
+    id,
+  }
+  const secretOrPrivateKey = config.jwt.secret;
+  const jwtOptions = {
+    expiresIn: '30s',
+  };
+  return jwt.sign(payload, secretOrPrivateKey, jwtOptions)
 }
 
 router.route('/login')
