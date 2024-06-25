@@ -109,6 +109,15 @@ const hashPassword = (fieldName = 'password') => {
   }
 }
 
+const validateLogin = () => {
+  return [
+    validateString('username'),
+    validateString('password'),
+    checkValidationError(),
+    removeUnregisteredProperties(),
+  ]
+}
+
 router.route('/signup')
   .post([
     validateSignup(),
