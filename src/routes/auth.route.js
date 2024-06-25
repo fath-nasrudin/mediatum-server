@@ -1,0 +1,85 @@
+const router = require('express').Router();
+const User = require('../models/user.model');
+const { body, validationResult, matchedData } = require('express-validator');
+
+const validateBoolean = (name, options = {}) => {
+  const message = `${name} should be a boolean`;
+
+  return body(name, message)
+    .optional()
+    .trim()
+    .escape()
+    .isBoolean();
+};
+
+const validateString = (name, options = {}) => {
+  const { min, max } = options;
+  const message = `${name} should be a string`;
+  const lengthMessage = `${name} should have ${min ? 'at least ' + min + ' chars' : ''} ${max ? 'max ' + max + ' chars': ''}`
+
+  return body(name, message)
+    .trim()
+    .escape()
+    .isLength({ min, max}).withMessage(lengthMessage)
+    .isString();
+};
+
+const validateUsername = (name = 'username', options = {}) => {
+  const { min = 3 } = options;
+  const message = `${name} should at least have ${min} characters and only contain alphabet, number, and . _ characters`;
+  return body(name, message)
+    .trim()
+    .escape()
+    .isLength({ min }).bail()
+    .isAlphanumeric().bail()
+    .matches(/^[A-Za-z0-9.-]+$/).bail()
+}
+
+const validatePassword = (name = 'password') => {
+  return   body(name, `${name} should at least have 8 characters and at least have 1 uppercase, 1 lowercase, 1 number, and 1 symbol`)
+    .trim()
+    .escape()
+    .isLength({ min: 8 }).bail()
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
+}
+
+const checkValidationError = () => {
+  return (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json(errors.array())
+    }
+    next();
+  }
+}
+
+const removeUnregisteredProperties = () => {
+  return (req, res, next) => {
+    req.body = matchedData(req);
+    next();
+  }
+}
+
+const validateSignup = () => {
+  return [
+    validateBoolean('is_admin'),
+    validateString('first_name', {}).optional(),
+    validateString('last_name', {}).optional(),
+    validateUsername('username', { min: 3 }),
+    validatePassword('password'),
+
+    checkValidationError(),
+    removeUnregisteredProperties(),
+  ]
+}
+
+router.route('/signup')
+  .post([
+    validateSignup(),
+    async (req, res) => {
+      res.json(req.body)
+    }
+  ])  
+
+module.exports = router;
+
