@@ -227,12 +227,33 @@ const authenticate = () => {
   }
 }
 
+const checkIsAdmin = () => (req, res, next) => {
+  if (!req.user || !req.user.is_admin) {
+    const err = new Error('Forbidden');
+    err.status = 403;
+    return next(err);
+  }
+  next();
+}
+
 router.route('/protected')
   .get([
     authenticate(),
     (req, res) => {
       res.json({
         message: 'You access protected route',
+        user: req.user,
+      })
+    }
+  ])
+
+router.route('/admin-only')
+  .get([
+    authenticate(),
+    checkIsAdmin(),
+    (req, res) => {
+      res.json({
+        message: 'You access admin only route',
         user: req.user,
       })
     }
