@@ -75,7 +75,7 @@ const checkValidationError = () => {
   return (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json(errors.array())
+      next(new ApiError(400, 'validation failed', { errors: errors.array()}))
     }
     next();
   }
@@ -182,17 +182,13 @@ router.route('/login')
     async (req, res, next) => {
       try {
         if (!req.user) {
-          const err = new Error('Wrong Username or Password');
-          err.status = 400;
-          next(err);
+          next(new ApiError(400, 'Wrong username or Password'));
         }
 
         const isMatched = await hasher.compare(req.body.password, req.user.password);
 
         if (!isMatched) {
-          const err = new Error('Wrong Username or Password');
-          err.status = 400;
-          next(err);
+          next(new ApiError(400, 'Wrong username or Password'));
         }
 
         res.json({
@@ -211,9 +207,7 @@ const authenticate = () => {
     // verify valid bearer token format
     const isBearerToken = req.headers.authorization.startsWith('Bearer ');
     if (!isBearerToken) {
-      const err = new Error('Invalid bearer token format');
-      err.status = 400;
-      next(err)
+      return next(new ApiError(400, 'Invalid bearer token format'))
     }
 
     // verify token
@@ -245,9 +239,7 @@ const authenticateRefreshToken = () => {
     // verify valid bearer token format
     const isBearerToken = req.headers.authorization.startsWith('Bearer ');
     if (!isBearerToken) {
-      const err = new Error('Invalid bearer token format');
-      err.status = 400;
-      next(err)
+      return next(new ApiError(400, 'Invalid bearer token format'))
     }
 
     // verify token
@@ -262,9 +254,7 @@ const authenticateRefreshToken = () => {
       const user = await User.findById(userId);
 
       if (!user) {
-        const err = new Error('User not found');
-        err.status = 400;
-        return next(err);
+        return next(new ApiError(401, 'Not Authorized - user not found'))
       }
 
       req.user = user;
@@ -276,9 +266,7 @@ const authenticateRefreshToken = () => {
 
 const checkIsAdmin = () => (req, res, next) => {
   if (!req.user || !req.user.is_admin) {
-    const err = new Error('Forbidden');
-    err.status = 403;
-    return next(err);
+    return next(new ApiError(403, 'Forbidden'))
   }
   next();
 }
