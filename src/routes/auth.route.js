@@ -4,6 +4,7 @@ const { body, validationResult, matchedData } = require('express-validator');
 const hasher = require('../utils/hasher');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const { ApiError } = require('../utils/error');
 
 const validateBoolean = (name, options = {}) => {
   const message = `${name} should be a boolean`;
@@ -312,6 +313,13 @@ router.route('/refresh-token')
       res.json({
         access_token: generateAccessToken(req.user._id)
       })
+    }
+  ])
+
+router.route('/test-error')
+  .get([
+    (req, res, next) => {
+      next(new ApiError(404, 'User Not Found'))
     }
   ])
 

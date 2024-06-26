@@ -1,4 +1,5 @@
 const express = require('express');
+const { initialize: errorHandlerInitialize } = require('./utils/error')
 
 const app = express();
 
@@ -8,5 +9,7 @@ app.use(express.json())
 
 // api
 app.use(require('./routes'));
+
+errorHandlerInitialize(app);
 
 module.exports = app;
