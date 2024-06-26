@@ -15,9 +15,15 @@ module.exports.createArticle = () => [
   checkValidationError(),
   removeUnregisteredProperties(),
   async (req, res, next) => {
-    res.json({
-      message: 'Hit create article',
-      body: req.body,
-    });
+    try {
+      const article = new Article({
+        ...req.body,
+        user: req.user._id,
+      });
+      await article.save();
+      res.status(201).json();
+    } catch (error) {
+      next(error);
+    }
   },
 ];
