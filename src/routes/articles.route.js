@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Article = require('../models/article.model');
 const { attachUserIfTokenExist } = require('../utils/auth')
+const articleController = require('../controllers/article.controller');
 
 const extractProperties = (obj, properties) => {
     return properties.reduce((result, property) => {
@@ -50,5 +51,8 @@ router.route('/')
       }
     }
   ])
+  .post(
+    articleController.createArticle()
+  )
 module.exports = router;
 
