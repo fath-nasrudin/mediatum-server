@@ -56,5 +56,10 @@ router.route('/')
     checkIsAdmin(),
     articleController.createArticle(),
   ])
+
+router.route('/:id')
+  .post([
+    articleController.updateArticle(),
+  ])
 module.exports = router;
 

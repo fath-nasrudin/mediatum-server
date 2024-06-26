@@ -27,3 +27,13 @@ module.exports.createArticle = () => [
     }
   },
 ];
+
+module.exports.updateArticle = () => [
+    async (req, res, next) => {
+    try {
+      res.status(200).json({message: 'hit update article'});
+    } catch (error) {
+      next(error);
+    }
+  },
+]
