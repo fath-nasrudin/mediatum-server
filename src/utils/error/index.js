@@ -12,6 +12,14 @@ const normalizeError  = () => (err, req, res, next) => {
   next(err);
 };
 
+const handleJwtError = () => (err, req, res, next) => {
+  if (err.name === 'TokenExpiredError'
+    || err.name === 'JsonWebTokenError'
+    || err.name === 'NotBeforeError'
+  ) err.statusCode = 401;
+  next(err);
+};
+
 const sendError = () => (err, req, res, next) => {
   res.status(err.statusCode || err.status || 500).json({
     name: err.name,
@@ -25,6 +33,7 @@ const logError = () => (err, req, res, next) => {
 };
 
 const initialize = (app) => {
+  app.use(handleJwtError())
   app.use(normalizeError())
   app.use(logError())
   app.use(sendError())
