@@ -163,6 +163,17 @@ const generateAccessToken = (id, options  = {}) => {
   return jwt.sign(payload, secretOrPrivateKey, jwtOptions)
 }
 
+const generateRefreshToken = (id, options  = {}) => {
+  const payload = {
+    id,
+  }
+  const secretOrPrivateKey = config.jwt.secret;
+  const jwtOptions = {
+    expiresIn: config.jwt.refresh.exp,
+  };
+  return jwt.sign(payload, secretOrPrivateKey, jwtOptions)
+}
+
 router.route('/login')
   .post([
     validateLogin(),
@@ -185,6 +196,7 @@ router.route('/login')
 
         res.json({
           message: 'success login',
+          refresh_token: generateRefreshToken(req.user._id),
           access_token: generateAccessToken(req.user._id)
         })
       } catch (error) {
@@ -194,6 +206,40 @@ router.route('/login')
   ])
 
 const authenticate = () => {
+  return async (req, res, next) => {
+    // verify valid bearer token format
+    const isBearerToken = req.headers.authorization.startsWith('Bearer ');
+    if (!isBearerToken) {
+      const err = new Error('Invalid bearer token format');
+      err.status = 400;
+      next(err)
+    }
+
+    // verify token
+    const [, token] = req.headers.authorization.split(' ');
+    jwt.verify(token, config.jwt.secret, async (err, decoded) => {
+      if (err) {
+        return next(err);
+      }
+
+      // attach user to req object
+      const userId = decoded.id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        const err = new Error('User not found');
+        err.status = 400;
+        return next(err);
+      }
+
+      req.user = user;
+      next();
+    })
+
+  }
+}
+
+const authenticateRefreshToken = () => {
   return async (req, res, next) => {
     // verify valid bearer token format
     const isBearerToken = req.headers.authorization.startsWith('Bearer ');
@@ -255,6 +301,16 @@ router.route('/admin-only')
       res.json({
         message: 'You access admin only route',
         user: req.user,
+      })
+    }
+  ])
+
+router.route('/refresh-token')
+  .get([
+    authenticateRefreshToken(),
+    (req, res) => {
+      res.json({
+        access_token: generateAccessToken(req.user._id)
       })
     }
   ])
