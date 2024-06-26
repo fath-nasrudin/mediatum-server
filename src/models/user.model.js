@@ -6,7 +6,8 @@ const userSchema = new Schema({
   first_name: { type: String },
   last_name: { type: String },
   username: { type: String },
-  password: { type: String }
+  password: { type: String },
+  is_admin: { type: Boolean, default: false },
 }, {
   timestamps: {
     createdAt: 'created_at',
