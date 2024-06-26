@@ -13,7 +13,7 @@ const normalizeError  = () => (err, req, res, next) => {
 };
 
 const sendError = () => (err, req, res, next) => {
-  res.status(err.statusCode || 500).json({
+  res.status(err.statusCode || err.status || 500).json({
     name: err.name,
     message: err.message, 
     ...err});
