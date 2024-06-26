@@ -158,7 +158,7 @@ const generateAccessToken = (id, options  = {}) => {
   }
   const secretOrPrivateKey = config.jwt.secret;
   const jwtOptions = {
-    expiresIn: '30s',
+    expiresIn: config.jwt.access.exp,
   };
   return jwt.sign(payload, secretOrPrivateKey, jwtOptions)
 }
