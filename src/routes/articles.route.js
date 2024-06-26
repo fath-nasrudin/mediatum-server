@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const Article = require('../models/article.model');
-const { attachUserIfTokenExist } = require('../utils/auth')
+const { attachUserIfTokenExist, checkIsAdmin, authenticate } = require('../utils/auth')
 const articleController = require('../controllers/article.controller');
 
 const extractProperties = (obj, properties) => {
@@ -51,8 +51,10 @@ router.route('/')
       }
     }
   ])
-  .post(
-    articleController.createArticle()
-  )
+  .post([
+    authenticate(),
+    checkIsAdmin(),
+    articleController.createArticle(),
+  ])
 module.exports = router;
 
