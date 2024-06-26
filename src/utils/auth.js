@@ -36,8 +36,13 @@ const attachUserIfTokenExist = () => {
 
 const authenticate = () => {
   return async (req, res, next) => {
+    // check is authorization provided
+    if (!req.headers.authorization) {
+      return next(new ApiError(401, 'Unauthorized'))
+    }
+
     // verify valid bearer token format
-    const isBearerToken = req.headers.authorization?.startsWith('Bearer ');
+    const isBearerToken = req.headers.authorization.startsWith('Bearer ');
     if (!isBearerToken) {
       return next(new ApiError(400, 'Invalid bearer token format'))
     }
@@ -68,8 +73,13 @@ const authenticate = () => {
 
 const authenticateRefreshToken = () => {
   return async (req, res, next) => {
+    // check is authorization provided
+    if (!req.headers.authorization) {
+      return next(new ApiError(401, 'Unauthorized'))
+    }
+
     // verify valid bearer token format
-    const isBearerToken = req.headers.authorization?.startsWith('Bearer ');
+    const isBearerToken = req.headers.authorization.startsWith('Bearer ');
     if (!isBearerToken) {
       return next(new ApiError(400, 'Invalid bearer token format'))
     }
