@@ -205,7 +205,7 @@ router.route('/login')
 const authenticate = () => {
   return async (req, res, next) => {
     // verify valid bearer token format
-    const isBearerToken = req.headers.authorization.startsWith('Bearer ');
+    const isBearerToken = req.headers.authorization?.startsWith('Bearer ');
     if (!isBearerToken) {
       return next(new ApiError(400, 'Invalid bearer token format'))
     }
@@ -237,7 +237,7 @@ const authenticate = () => {
 const authenticateRefreshToken = () => {
   return async (req, res, next) => {
     // verify valid bearer token format
-    const isBearerToken = req.headers.authorization.startsWith('Bearer ');
+    const isBearerToken = req.headers.authorization?.startsWith('Bearer ');
     if (!isBearerToken) {
       return next(new ApiError(400, 'Invalid bearer token format'))
     }
