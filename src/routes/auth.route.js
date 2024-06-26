@@ -193,5 +193,50 @@ router.route('/login')
     } 
   ])
 
+const authenticate = () => {
+  return async (req, res, next) => {
+    // verify valid bearer token format
+    const isBearerToken = req.headers.authorization.startsWith('Bearer ');
+    if (!isBearerToken) {
+      const err = new Error('Invalid bearer token format');
+      err.status = 400;
+      next(err)
+    }
+
+    // verify token
+    const [, token] = req.headers.authorization.split(' ');
+    jwt.verify(token, config.jwt.secret, async (err, decoded) => {
+      if (err) {
+        return next(err);
+      }
+
+      // attach user to req object
+      const userId = decoded.id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        const err = new Error('User not found');
+        err.status = 400;
+        return next(err);
+      }
+
+      req.user = user;
+      next();
+    })
+
+  }
+}
+
+router.route('/protected')
+  .get([
+    authenticate(),
+    (req, res) => {
+      res.json({
+        message: 'You access protected route',
+        user: req.user,
+      })
+    }
+  ])
+
 module.exports = router;
 
