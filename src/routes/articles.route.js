@@ -58,7 +58,7 @@ router.route('/')
   ])
 
 router.route('/:id')
-  .post([
+  .put([
     articleController.updateArticle(),
   ])
 module.exports = router;
