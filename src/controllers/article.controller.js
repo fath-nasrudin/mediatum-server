@@ -1,4 +1,5 @@
 const Article = require('../models/article.model');
+const { ApiError } = require('../utils/error');
 const { 
   validateString,
   checkValidationError,
@@ -38,13 +39,13 @@ module.exports.updateArticle = () => [
   
   checkValidationError(),
     async (req, res, next) => {
-      req.body = matchedData(req, {locations: ['body']});
-      req.params = matchedData(req, {locations: ['params']});
     try {
-      res.status(200).json({message: 'hit update article', 
-      body: req.body,
-      params: req.params,
-    });
+      const articleData = matchedData(req, {locations: ['body']});
+      const updatedArticle = await Article.findByIdAndUpdate(req.params.id, articleData, {new: true});
+
+      if (!updatedArticle) throw new ApiError(404, 'Article not found')
+      
+      res.status(200).json(updatedArticle);
     } catch (error) {
       next(error);
     }
