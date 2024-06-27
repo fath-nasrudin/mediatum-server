@@ -44,3 +44,9 @@ module.exports.getCommentListByArticleIdParam = () => [
     }
   }
 ]
+
+module.exports.createComment = () => [
+  async (req, res, next) => {
+    res.send('hit create comment')
+  }
+]
