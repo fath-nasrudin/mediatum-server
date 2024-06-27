@@ -81,7 +81,9 @@ module.exports.deleteArticleByIdParam = () => [
   checkValidationError(),
   async (req, res, next) => {
     try {
-      res.json('hit delete article')
+      const deletedArticle = await Article.findByIdAndDelete(req.params.id);
+      if (!deletedArticle) throw new ApiError(404, `Article with ${req.params.id} not found`)
+      res.sendStatus(204);
     } catch (error) {
       next(error)
     }
