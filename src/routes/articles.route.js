@@ -40,7 +40,8 @@ router.route('/')
           .sort(sortString)
           .skip((pageNumber - 1) * limitNumber)
           .limit(limitNumber)
-          .select(selectString);
+          .select(selectString)
+          .populate('user', 'first_name last_name username');
         const totalItems = await Article.countDocuments(filters);
         const totalPages = (!limitNumber) ? 1 : Math.ceil(totalItems / limitNumber);
 
