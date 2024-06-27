@@ -96,6 +96,13 @@ const removeUnregisteredProperties = () => {
   }
 }
 
+const removeUnregisteredBodyProperties = () => {
+  return (req, res, next) => {
+req.body = matchedData(req, { locations: ['body']});
+    next();
+  }
+}
+
 module.exports = {
   validateId,
   matchedData,
@@ -107,6 +114,7 @@ module.exports = {
   validateRepeatPassword,
   checkValidationError,
   removeUnregisteredProperties,
+  removeUnregisteredBodyProperties
 }
 
 
