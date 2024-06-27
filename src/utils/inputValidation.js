@@ -98,6 +98,7 @@ const removeUnregisteredProperties = () => {
 
 module.exports = {
   validateId,
+  matchedData,
   validateBoolean,
   validateString,
   validateNotSanitizedString,
