@@ -26,9 +26,14 @@ router.route('/')
         const pageNumber = parseInt(page);
         const limitNumber = parseInt(limit);
         const sortString = (sort) ? sort.split(/[,;]/).join(' ') : null;
-        const filters = extractProperties(urlQueries, ['is_published']);
-        const selectString = !req.user || !req.user.is_admin ? 'title createdAt' : null ;
+        let filters = extractProperties(urlQueries, ['is_published']);
+
+        const isAdmin = req.user && req.user.is_admin;
+        const selectString =  !isAdmin ? 'title createdAt' : null ;
         const currentPage = (!limitNumber) ? 1 : pageNumber;
+
+        // if the requester not an admin, hide the unpublished articles
+        if (!isAdmin) filters = { ...filters, is_published: true };
 
 
         const items = await Article.find(filters)
@@ -36,7 +41,7 @@ router.route('/')
           .skip((pageNumber - 1) * limitNumber)
           .limit(limitNumber)
           .select(selectString);
-        const totalItems = await Article.countDocuments();
+        const totalItems = await Article.countDocuments(filters);
         const totalPages = (!limitNumber) ? 1 : Math.ceil(totalItems / limitNumber);
 
         res.json({
