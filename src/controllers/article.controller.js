@@ -77,6 +77,8 @@ module.exports.updateArticle = () => [
 ]
 
 module.exports.deleteArticleByIdParam = () => [
+  validateId('id', {location: 'param'}),
+  checkValidationError(),
   async (req, res, next) => {
     try {
       res.json('hit delete article')
