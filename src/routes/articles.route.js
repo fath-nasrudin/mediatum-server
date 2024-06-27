@@ -2,7 +2,8 @@ const router = require('express').Router();
 const Article = require('../models/article.model');
 const { attachUserIfTokenExist, checkIsAdmin, authenticate } = require('../utils/auth')
 const articleController = require('../controllers/article.controller');
-
+const commentController = require('../controllers/comment.controller');
+ 
 const extractProperties = (obj, properties) => {
     return properties.reduce((result, property) => {
         if (obj.hasOwnProperty(property)) {
@@ -61,6 +62,11 @@ router.route('/')
     authenticate(),
     checkIsAdmin(),
     articleController.createArticle(),
+  ])
+
+router.route('/:articleId/comments')
+  .get([
+    commentController.getCommentListByArticleParam(),
   ])
 
 router.route('/:id')
