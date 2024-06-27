@@ -1,5 +1,6 @@
 const Comment = require('../models/comment.model');
-const { checkValidationError, matchedData, validateString,} = require('../utils/inputValidation');
+const { checkValidationError, matchedData, validateString, validateId,  removeUnregisteredBodyProperties} = require('../utils/inputValidation');
+const { ApiError } = require('../utils/error');
 
 module.exports.getCommentListByArticleIdParam = () => [
   // pagination handler
@@ -57,6 +58,33 @@ module.exports.createComment = () => [
 
       const comment = await Comment.create(commentData);
       res.status(201).send(comment)
+    } catch (error) {
+      next(error)
+    }
+  }
+]
+
+module.exports.editComment = () => [
+  validateString('content').notEmpty().withMessage('comment cannot be empty'),
+
+  validateId('id', {location: 'param'}),
+
+  checkValidationError(),
+  removeUnregisteredBodyProperties(),
+
+  async (req, res, next) => {
+    try {
+      const comment = await Comment.findById(req.params.id);
+      if (!comment) throw new ApiError(404, `Comment with id ${req.params.id} is not found`);
+
+      // if the requester not own the comment, send 403;
+      if (req.user?._id.toString() !== comment.user.toString()) throw new ApiError(403, `Not Allowed`);
+
+      const updatedComment = await Comment.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+      if (!updatedComment) throw new ApiError(404, `Comment with id ${req.params.id} is not found`);
+      
+      res.json(updatedComment)
     } catch (error) {
       next(error)
     }

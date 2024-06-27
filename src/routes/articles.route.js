@@ -73,6 +73,12 @@ router.route('/:articleId/comments')
     commentController.createComment()
   ])
 
+router.route('/:articleId/comments/:id')
+  .put([
+    authenticate(),
+    commentController.editComment(),
+  ])
+
 router.route('/:id')
   .get([
     attachUserIfTokenExist(),
