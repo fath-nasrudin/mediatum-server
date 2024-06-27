@@ -68,6 +68,9 @@ router.route('/:articleId/comments')
   .get([
     commentController.getCommentListByArticleIdParam(),
   ])
+  .post([
+    commentController.createComment()
+  ])
 
 router.route('/:id')
   .get([
