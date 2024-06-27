@@ -5,6 +5,8 @@ const {
   removeUnregisteredProperties,
   validateNotSanitizedString,
   validateBoolean,
+  validateId,
+  matchedData,
 } = require('../utils/inputValidation')
 
 module.exports.createArticle = () => [
@@ -29,15 +31,20 @@ module.exports.createArticle = () => [
 ];
 
 module.exports.updateArticle = () => [
+  validateId('id', {location: 'param'}),
   validateString('title').notEmpty().optional(),
   validateNotSanitizedString('content').notEmpty().optional(),
   validateBoolean('is_published').optional(),
   
   checkValidationError(),
-  removeUnregisteredProperties(),
     async (req, res, next) => {
+      req.body = matchedData(req, {locations: ['body']});
+      req.params = matchedData(req, {locations: ['params']});
     try {
-      res.status(200).json({message: 'hit update article', body: req.body});
+      res.status(200).json({message: 'hit update article', 
+      body: req.body,
+      params: req.params,
+    });
     } catch (error) {
       next(error);
     }
