@@ -58,6 +58,10 @@ router.route('/')
   ])
 
 router.route('/:id')
+  .get([
+    attachUserIfTokenExist(),
+    articleController.getArticleById()
+  ])
   .put([
     authenticate(),
     checkIsAdmin(),
