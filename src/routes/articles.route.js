@@ -66,7 +66,7 @@ router.route('/')
 
 router.route('/:articleId/comments')
   .get([
-    commentController.getCommentListByArticleParam(),
+    commentController.getCommentListByArticleIdParam(),
   ])
 
 router.route('/:id')
