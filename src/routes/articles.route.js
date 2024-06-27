@@ -69,6 +69,7 @@ router.route('/:articleId/comments')
     commentController.getCommentListByArticleIdParam(),
   ])
   .post([
+    authenticate(),
     commentController.createComment()
   ])
 
