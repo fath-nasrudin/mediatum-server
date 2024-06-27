@@ -1,4 +1,5 @@
 const Comment = require('../models/comment.model');
+const { checkValidationError, matchedData, validateString,} = require('../utils/inputValidation');
 
 module.exports.getCommentListByArticleIdParam = () => [
   // pagination handler
@@ -46,7 +47,18 @@ module.exports.getCommentListByArticleIdParam = () => [
 ]
 
 module.exports.createComment = () => [
+  validateString('content').notEmpty().withMessage('comment cannot be empty'),
+  checkValidationError(),
   async (req, res, next) => {
-    res.send('hit create comment')
+    try {
+      const commentData = matchedData(req, { locations: ['body']});
+      commentData.user = req.user._id;
+      commentData.article = req.params.articleId;
+
+      const comment = await Comment.create(commentData);
+      res.status(201).send(comment)
+    } catch (error) {
+      next(error)
+    }
   }
 ]
