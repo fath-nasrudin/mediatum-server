@@ -75,3 +75,13 @@ module.exports.updateArticle = () => [
     }
   },
 ]
+
+module.exports.deleteArticleByIdParam = () => [
+  async (req, res, next) => {
+    try {
+      res.json('hit delete article')
+    } catch (error) {
+      next(error)
+    }
+  }
+]

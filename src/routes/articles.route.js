@@ -67,5 +67,8 @@ router.route('/:id')
     checkIsAdmin(),
     articleController.updateArticle(),
   ])
+  .delete([
+    articleController.deleteArticleByIdParam()
+  ])
 module.exports = router;
 
