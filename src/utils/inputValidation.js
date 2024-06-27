@@ -1,5 +1,24 @@
-const { body, validationResult, matchedData } = require('express-validator');
+const { body, validationResult, matchedData, param } = require('express-validator');
 const { ApiError } = require('../utils/error');
+
+const validateId = (name, options = {}) => {
+  const message = `${name} should be a valid id`;
+
+  let input;
+  switch (options?.location) {
+    case 'param':
+      input = (name, message) => param(name, message);
+      break;
+    default:
+      input = (name, message) => body(name, message);
+      break;
+  }
+
+  return input(name, message)
+    .trim()
+    .escape()
+    .isMongoId();
+};
 
 const validateBoolean = (name, options = {}) => {
   const message = `${name} should be a boolean`;
@@ -78,6 +97,7 @@ const removeUnregisteredProperties = () => {
 }
 
 module.exports = {
+  validateId,
   validateBoolean,
   validateString,
   validateNotSanitizedString,
