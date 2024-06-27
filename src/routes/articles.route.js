@@ -78,6 +78,10 @@ router.route('/:articleId/comments/:id')
     authenticate(),
     commentController.editComment(),
   ])
+  .delete([
+    authenticate(),
+    commentController.deleteComment()
+  ])
 
 router.route('/:id')
   .get([

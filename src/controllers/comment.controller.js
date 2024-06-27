@@ -90,3 +90,27 @@ module.exports.editComment = () => [
     }
   }
 ]
+
+module.exports.deleteComment = () => [
+  validateId('id', {location: 'param'}),
+  checkValidationError(),
+
+  async (req, res, next) => {
+    try {
+      const comment = await Comment.findById(req.params.id);
+      if (!comment) throw new ApiError(404, `Comment with id ${req.params.id} is not found`);
+
+      // not allowed if the requester is not admin or owner of the comment
+      const isOwner = req.user?._id.toString() === comment.user.toString();
+      const isAdmin = req.user?.is_admin;
+      if (!isOwner && !isAdmin) throw new ApiError(403, `Not Allowed`);
+
+      const deletedComment = await Comment.findByIdAndDelete(req.params.id);
+      if (!deletedComment) throw new ApiError(404, `Comment with id ${req.params.id} is not found`);
+
+      res.sendStatus(204);
+    } catch (error) {
+      next(error)
+    }
+  }
+];
