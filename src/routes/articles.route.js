@@ -59,6 +59,8 @@ router.route('/')
 
 router.route('/:id')
   .put([
+    authenticate(),
+    checkIsAdmin(),
     articleController.updateArticle(),
   ])
 module.exports = router;
