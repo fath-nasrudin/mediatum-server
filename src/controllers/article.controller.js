@@ -29,9 +29,15 @@ module.exports.createArticle = () => [
 ];
 
 module.exports.updateArticle = () => [
+  validateString('title').notEmpty().optional(),
+  validateNotSanitizedString('content').notEmpty().optional(),
+  validateBoolean('is_published').optional(),
+  
+  checkValidationError(),
+  removeUnregisteredProperties(),
     async (req, res, next) => {
     try {
-      res.status(200).json({message: 'hit update article'});
+      res.status(200).json({message: 'hit update article', body: req.body});
     } catch (error) {
       next(error);
     }
