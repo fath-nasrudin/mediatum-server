@@ -48,7 +48,7 @@ module.exports.createArticle = () => [
         user: req.user._id,
       });
       await article.save();
-      res.status(201).json();
+      res.status(201).json(article);
     } catch (error) {
       next(error);
     }
