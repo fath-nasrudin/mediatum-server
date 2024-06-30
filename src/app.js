@@ -1,7 +1,13 @@
 const express = require('express');
 const { initialize: errorHandlerInitialize } = require('./utils/error')
+const cors = require('cors');
+const config = require('./config');
 
 const app = express();
+
+app.use(cors({
+  origin: config.cors.origin,
+}));
 
 // body parser middleware
 app.use(express.urlencoded({ extended: false }))

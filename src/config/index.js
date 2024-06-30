@@ -13,5 +13,8 @@ module.exports = {
       secret: process.env.JWT_ACCESS_SECRET,
       exp: process.env.JWT_ACCESS_EXP,
     },
+  },
+  cors: {
+    origin: (process.env.CORS_ORIGIN)?.split(/[, |]/)
   }
 }
