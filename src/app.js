@@ -1,10 +1,12 @@
 const express = require('express');
 const { initialize: errorHandlerInitialize } = require('./utils/error')
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const config = require('./config');
 
 const app = express();
 
+app.use(cookieParser());
 app.use(cors({
   origin: config.cors.origin,
 }));
