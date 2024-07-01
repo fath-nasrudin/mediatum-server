@@ -106,6 +106,36 @@ const authenticateRefreshToken = () => {
   }
 }
 
+const authenticateCookieRefreshToken = () => {
+  return async (req, res, next) => {
+
+    const refreshToken = req.cookies.refresh_token;
+    // check is authorization provided
+    if (!refreshToken) {
+      return next(new ApiError(401, 'Unauthorized'))
+    }
+
+    // verify token
+    jwt.verify(refreshToken, config.jwt.secret, async (err, decoded) => {
+      if (err) {
+        return next(err);
+      }
+
+      // attach user to req object
+      const userId = decoded.id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return next(new ApiError(401, 'Not Authorized - user not found'))
+      }
+
+      req.user = user;
+      next();
+    })
+
+  }
+}
+
 const checkIsAdmin = () => (req, res, next) => {
   if (!req.user || !req.user.is_admin) {
     return next(new ApiError(403, 'Forbidden'))
@@ -140,6 +170,7 @@ module.exports = {
   attachUserIfTokenExist,
   authenticateRefreshToken,
   authenticate,
+  authenticateCookieRefreshToken,
   checkIsAdmin,
   generateAccessToken,
   generateRefreshToken,

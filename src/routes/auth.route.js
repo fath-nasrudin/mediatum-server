@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const { ApiError } = require('../utils/error');
 const { checkIsAdmin, authenticate, authenticateRefreshToken, 
+  authenticateCookieRefreshToken,
   generateAccessToken, generateRefreshToken } = require('../utils/auth')
 
 const validateBoolean = (name, options = {}) => {
@@ -171,9 +172,10 @@ router.route('/login')
           next(new ApiError(400, 'Wrong username or Password'));
         }
 
+        const refreshToken = generateRefreshToken(req.user._id);
+        res.cookie('refresh_token', refreshToken, { httpOnly: true, secure: true });
+
         res.json({
-          message: 'success login',
-          refresh_token: generateRefreshToken(req.user._id),
           access_token: generateAccessToken(req.user._id)
         })
       } catch (error) {
@@ -208,7 +210,7 @@ router.route('/admin-only')
 
 router.route('/refresh-token')
   .get([
-    authenticateRefreshToken(),
+    authenticateCookieRefreshToken(),
     (req, res) => {
       res.json({
         access_token: generateAccessToken(req.user._id)
