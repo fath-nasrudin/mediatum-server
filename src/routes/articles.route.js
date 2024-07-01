@@ -30,7 +30,8 @@ router.route('/')
         let filters = extractProperties(urlQueries, ['is_published']);
 
         const isAdmin = req.user && req.user.is_admin;
-        const selectString =  !isAdmin ? 'title createdAt' : '-content' ;
+        let selectString =  !isAdmin ? '-is_published' : '' ;
+        selectString += ' -content'
         const currentPage = (!limitNumber) ? 1 : pageNumber;
 
         // if the requester not an admin, hide the unpublished articles
