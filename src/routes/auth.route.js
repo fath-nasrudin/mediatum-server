@@ -9,6 +9,7 @@ const {
   checkIsAdmin,
   authenticate,
   authenticateRefreshToken,
+  authenticateCookieRefreshToken,
   generateAccessToken,
   generateRefreshToken,
 } = require('../utils/auth');
@@ -232,7 +233,7 @@ router.route('/admin-only').get([
 ]);
 
 router.route('/refresh-token').get([
-  authenticateRefreshToken(),
+  authenticateCookieRefreshToken(),
   (req, res) => {
     res.json({
       access_token: generateAccessToken({
