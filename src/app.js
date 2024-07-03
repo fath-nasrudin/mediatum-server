@@ -10,6 +10,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: config.cors.origin,
+    credentials: true,
   })
 );
 
