@@ -21,7 +21,7 @@ const attachUserIfTokenExist = () => {
       }
 
       // attach user to req object
-      const userId = decoded.id;
+      const userId = decoded._id;
       const user = await User.findById(userId);
 
       if (!user) {
@@ -55,7 +55,7 @@ const authenticate = () => {
       }
 
       // attach user to req object
-      const userId = decoded.id;
+      const userId = decoded._id;
       const user = await User.findById(userId);
 
       if (!user) {
@@ -92,7 +92,7 @@ const authenticateRefreshToken = () => {
       }
 
       // attach user to req object
-      const userId = decoded.id;
+      const userId = decoded._id;
       const user = await User.findById(userId);
 
       if (!user) {
@@ -122,7 +122,7 @@ const authenticateCookieRefreshToken = () => {
       }
 
       // attach user to req object
-      const userId = decoded.id;
+      const userId = decoded._id;
       const user = await User.findById(userId);
 
       if (!user) {
@@ -144,27 +144,21 @@ const checkIsAdmin = () => (req, res, next) => {
 }
 
 
-const generateAccessToken = (id, options  = {}) => {
-  const payload = {
-    id,
-  }
+const generateAccessToken = (payload, options = {}) => {
   const secretOrPrivateKey = config.jwt.secret;
   const jwtOptions = {
     expiresIn: config.jwt.access.exp,
   };
-  return jwt.sign(payload, secretOrPrivateKey, jwtOptions)
-}
+  return jwt.sign(payload, secretOrPrivateKey, jwtOptions);
+};
 
-const generateRefreshToken = (id, options  = {}) => {
-  const payload = {
-    id,
-  }
+const generateRefreshToken = (payload, options = {}) => {
   const secretOrPrivateKey = config.jwt.secret;
   const jwtOptions = {
     expiresIn: config.jwt.refresh.exp,
   };
-  return jwt.sign(payload, secretOrPrivateKey, jwtOptions)
-}
+  return jwt.sign(payload, secretOrPrivateKey, jwtOptions);
+};
 
 module.exports = {
   attachUserIfTokenExist,
