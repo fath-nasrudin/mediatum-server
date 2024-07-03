@@ -196,7 +196,6 @@ router.route('/login').post([
         sameSite: 'none',
       });
 
-      console.log({ user: req.user });
       res.json({
         access_token: generateAccessToken({
           _id: req.user._id,
