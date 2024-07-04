@@ -196,13 +196,17 @@ router.route('/login').post([
         sameSite: 'none',
       });
 
+      const payload = {
+        _id: req.user._id,
+        username: req.user.username,
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+      };
+
+      if (req.user.is_admin) payload.is_admin = req.user.is_admin;
+
       res.json({
-        access_token: generateAccessToken({
-          _id: req.user._id,
-          username: req.user.username,
-          first_name: req.user.first_name,
-          last_name: req.user.last_name,
-        }),
+        access_token: generateAccessToken(payload),
       });
     } catch (error) {
       next(error);
@@ -234,13 +238,15 @@ router.route('/admin-only').get([
 router.route('/refresh-token').get([
   authenticateCookieRefreshToken(),
   (req, res) => {
+    const payload = {
+      _id: req.user._id,
+      username: req.user.username,
+      first_name: req.user.first_name,
+      last_name: req.user.last_name,
+    };
+    if (req.user.is_admin) payload.is_admin = req.user.is_admin;
     res.json({
-      access_token: generateAccessToken({
-        _id: req.user._id,
-        username: req.user.username,
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-      }),
+      access_token: generateAccessToken(payload),
     });
   },
 ]);
