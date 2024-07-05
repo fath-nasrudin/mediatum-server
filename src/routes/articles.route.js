@@ -10,7 +10,7 @@ const commentController = require('../controllers/comment.controller');
 
 router
   .route('/')
-  .get(articleController.getArticleList())
+  .get([attachUserIfTokenExist(), articleController.getArticleList()])
   .post([authenticate(), checkIsAdmin(), articleController.createArticle()]);
 
 router

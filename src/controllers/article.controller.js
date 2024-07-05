@@ -12,7 +12,6 @@ const {
 } = require('../utils/inputValidation');
 
 module.exports.getArticleList = () => [
-  attachUserIfTokenExist(),
   async (req, res, next) => {
     try {
       // move to utilities if this function needed in another place
