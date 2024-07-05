@@ -31,7 +31,7 @@ module.exports.getArticleList = () => [
       let filters = sanitizeProperties(urlQueries, ['is_published']);
 
       const isAdmin = req.user && req.user.is_admin;
-      const selectString = !isAdmin ? 'title createdAt' : '-content';
+      const selectString = !isAdmin ? '-content -is_published' : '-content';
       const currentPage = !limitNumber ? 1 : pageNumber;
 
       // if the requester not an admin, hide the unpublished articles
